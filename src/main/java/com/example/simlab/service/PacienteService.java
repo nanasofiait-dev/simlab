@@ -80,7 +80,7 @@ public class PacienteService {
         Optional<Paciente> optional = repository.findById(id);
 
         if (optional.isEmpty()) {
-            throw new RecursoNaoEncontradoException(" Paciente não foi encontrado");
+            throw new RecursoNaoEncontradoException("Paciente não foi encontrado");
         }
 
         // se existe preciso buscar esse paciente em optional

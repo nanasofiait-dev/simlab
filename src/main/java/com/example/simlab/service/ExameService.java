@@ -29,7 +29,7 @@ public class ExameService {
     public ExameDetalheDTO criar(ExameDTO dto) {
 
         if (exameRepository.existsByNome(dto.getNome())) {
-            throw new DuplicadoException(" Existe exame com esse nome");
+            throw new DuplicadoException("Existe exame com esse nome");
         }
 
         Paciente paciente= pacienteRepository.findById(dto.getPacienteId())
