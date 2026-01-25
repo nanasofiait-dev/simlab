@@ -100,6 +100,7 @@ public class PacienteService {
     public Optional<PacienteDetalheDTO> buscarPorId(Long id) {
 
         return repository.findById(id).map(paciente -> new PacienteDetalheDTO(paciente.getId(), paciente.getNome(), paciente.getDataDeNascimento(), paciente.getCartaoCidadao(), paciente.getTelefone(), paciente.getEmail()));
+    }
 
 /**
  * Atualiza os dados de um paciente existente.
@@ -109,7 +110,7 @@ public class PacienteService {
  * @return Detalhes do paciente atualizado
  * @throws RecursoNaoEncontradoException se o paciente não for encontrado
  */
-        public PacienteDetalheDTO atualizar (Long id, PacienteUpdateDTO dto){
+        public PacienteDetalheDTO atualizar (Long id, PacienteUpdateDTO dto ){
 
             //pesquiso se existe ID
             Optional<Paciente> optional = repository.findById(id);
@@ -131,7 +132,13 @@ public class PacienteService {
             //aqui o spring vê id e atualiza na bd
             Paciente atualizada = repository.save(paciente);
 
-            return new PacienteDetalheDTO(atualizada.getId(), atualizada.getNome(), atualizada.getDataDeNascimento(), atualizada.getCartaoCidadao(), atualizada.getTelefone(), atualizada.getEmail());
+            return new PacienteDetalheDTO(
+                    atualizada.getId(),
+                    atualizada.getNome(),
+                    atualizada.getDataDeNascimento(),
+                    atualizada.getCartaoCidadao(),
+                    atualizada.getTelefone(),
+                    atualizada.getEmail());
         }
 
         /**
