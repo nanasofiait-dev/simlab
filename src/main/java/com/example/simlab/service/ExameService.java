@@ -16,6 +16,13 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.Random;
 
+/**
+ * Service responsável pela lógica de negócio do Exame.
+ *
+ * @author Amanda
+ * @version 1.0
+ * @since 2026-01-15
+ */
 @Service
 public class ExameService {
     private final ExameRepository exameRepository;
@@ -26,6 +33,14 @@ public class ExameService {
         this.pacienteRepository = pacienteRepository;
     }
 
+    /**
+     * Cria um exame novo no sistema.
+     *
+     * @param dto Dados do exame a ser criado
+     * @return Detalhe do exame criado com ID gerado
+     * @throws DuplicadoException se já existe exame com o mesmo nome
+     * @throws RecursoNaoEncontradoException se o paciente não for encontrado
+     */
     public ExameDetalheDTO criar(ExameDTO dto) {
 
         if (exameRepository.existsByNome(dto.getNome())) {
@@ -48,6 +63,14 @@ public class ExameService {
 
     }
 
+    /**
+     * Lista exames que com filtros opcionais e paginação.
+     *
+     * @param nome Nome do exame para filtrar(opcional)
+     * @param descricao Descrição sobre o que é o exame para filtrar (opcional)
+     * @param pageable Configuração de página e ordenação
+     * @return Página contendo exames correspondêntes ao filtro
+     */
     public Page<ExameDTO> listar(String nome, String descricao, Pageable pageable) {
 
         Page<Exame> pagina;
@@ -67,6 +90,12 @@ public class ExameService {
 
     }
 
+    /**
+     * Buscar exame pelo identificador único do exame.
+     *
+     * @param id Identificação única do exame
+     * @return Optional contendo o exame  se encontrado, vazio caso contrário
+     */
     public Optional<ExameDetalheDTO> buscarPorId(Long id) {
 
         return exameRepository.findById(id).map(exame -> new ExameDetalheDTO(exame.getId(),exame.getNome(),exame.getDescricao(), exame.getPreco(), exame.getPaciente().getId()));
@@ -74,6 +103,14 @@ public class ExameService {
 
     }
 
+    /**
+     * Atualizar dados sobre o exame.
+     *
+     * @param id Identificação única do exame
+     * @param dto Novos dados do exame
+     * @return Exame detalhe do exame atualizado
+     * @throws RecursoNaoEncontradoException se o exame não for encontrado
+     */
     public ExameDetalheDTO atualizar (Long id, ExameUpdateDTO dto){
         Optional<Exame> optional= exameRepository.findById(id);
 
@@ -92,7 +129,12 @@ public class ExameService {
         return new ExameDetalheDTO(atualizada.getId(),atualizada.getNome(), atualizada.getDescricao(), atualizada.getPreco(),atualizada.getPaciente().getId());
     }
 
-
+    /**
+     * Apaga exame da base de dados.
+     *
+     * @param id Identificação única do exame
+     * @return True se o exame foi apagado, false se não foi encontrado
+     */
     public boolean apagar(Long id){
         if (exameRepository.existsById(id)){
             exameRepository.deleteById(id);

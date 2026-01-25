@@ -1,10 +1,35 @@
 package com.example.simlab.dto;
 
+/**
+ * DTO para retorno detalhado de exames.
+ *
+ * <p>Utilizado como resposta nas operações de criação, atualização e busca individual.
+ * Inclui o ID gerado pelo sistema.</p>
+ *
+ * @author Amanda
+ * @version 1.0
+ * @since 2026-01-15
+ */
 public class ExameDetalheDTO {
+    /**
+     * Identificador único do exame.
+     */
     private Long id;
+    /**
+     * Nome  do exame.
+     */
     private String nome;
+    /**
+     * Descrição do exame.
+     */
     private String descricao;
+    /**
+     * Preço do exame.
+     */
     private Double preco;
+    /**
+     * Identificador do paciente ao qual o exame pertence.
+     */
     private Long pacienteId;
 
     public ExameDetalheDTO() {

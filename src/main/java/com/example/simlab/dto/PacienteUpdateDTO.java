@@ -5,12 +5,37 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
+/**
+ * DTO para atualização de dados de pacientes.
+ *
+ * <p>Utilizado na operação de atualização (PUT) de pacientes existentes.
+ * Não inclui o ID pois este é fornecido como parâmetro na URL.</p>
+ *
+ *@author Amanda
+ *@version 1.0
+ *@since 2026-01-15
+ */
 public class PacienteUpdateDTO {
+    /**
+     * Nome completo do paciente.
+     */
     @NotBlank
     private String nome;
+    /**
+     * Data de nascimento do paciente.
+     */
     private LocalDate dataDeNascimento;
+    /**
+     * Número do Cartão de Cidadão do paciente.
+     */
     private String cartaoCidadao;
+    /**
+     * Número de telefone do paciente.
+     */
     private String telefone;
+    /**
+     * Endereço de e-mail do paciente.
+     */
     private String email;
 
     public PacienteUpdateDTO() {

@@ -14,6 +14,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
+/**
+ * Controller REST para gerenciar operações relacionadas a pacientes.
+ *
+ * <p> Fornece endpoints para criar, listar, buscar, atualizar e apagar pacientes.</p>
+ *
+ * @author  Amanda
+ * @version 1.0
+ * @since 2026-01-15
+ */
 @RestController
 @RequestMapping("/pacientes")
 public class PacienteController {
@@ -24,7 +33,12 @@ public class PacienteController {
         this.service = service;
     }
 
-    //criar, listar,buscar,atualizar e deletar
+    /**
+     * Cria um novo paciente.
+     *
+     * @param dto Dados do paciente a ser criado
+     * @return ResponseEntity com status 201 Created e detalhes do paciente criado
+     */
 
     @PostMapping
     public ResponseEntity<PacienteDetalheDTO> criar(@Valid @RequestBody PacienteDTO dto) {
@@ -33,6 +47,15 @@ public class PacienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(criar);
     }
 
+    /**
+     * Lista pacientes com filtros opcionais e paginação.
+     *
+     * @param nome Nome do paciente para filtrar (opcional)
+     * @param dataDeNascimento Data de Nascimento do paciente para filtrar (opcional)
+     * @param cartaoCidadao  Cartão de Cidadão para filtrar (opcional)
+     * @param pageable Parâmetros de paginação e ordenação
+     * @return  ResponseEntity com status 200 OK e página de pacientes
+     */
     @GetMapping
     public ResponseEntity<Page<PacienteDTO>> listar(@RequestParam(required = false) String nome,
                                                     @RequestParam(required = false) LocalDate dataDeNascimento,
@@ -45,7 +68,13 @@ public class PacienteController {
 
     }
 
-
+    /**
+     * Busca um paciente pelo seu identificador único.
+     *
+     * @param id Identificador único do paciente
+     * @return ResponseEntity com status 200 OK e detalhes do paciente se encontrado
+     * ou status 404 Not Found se não encontrado
+     */
     @GetMapping("/{id}")
     public ResponseEntity<PacienteDetalheDTO> buscar(@PathVariable Long id) {
 
@@ -55,6 +84,13 @@ public class PacienteController {
 
     }
 
+    /**
+     * Atualiza os dados de um paciente existente.
+     *
+     * @param id Identificador único do paciente a ser atualizado
+     * @param dto Novos dados do paciente
+     * @return ResponseEntity com status 200 OK e detalhes do paciente atualizado
+     */
     @PutMapping("/{id}")
     public ResponseEntity<PacienteDetalheDTO> atualizar(@PathVariable Long id, @Valid @RequestBody PacienteUpdateDTO dto) {
 
@@ -64,7 +100,12 @@ public class PacienteController {
 
     }
 
-
+    /**
+     * Apaga um paciente da base de dados.
+     *
+     * @param id Identificador único do paciente a ser apagado
+     * @return ResponseEntity com status 204 No Content se apagado com sucesso ou status 404 Not Found se não encontrado
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> apagar (@PathVariable Long id){
 

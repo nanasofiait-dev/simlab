@@ -3,17 +3,36 @@ package com.example.simlab.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * DTO para criação e listagem do exame.
+ *
+ * <p>Utilizado nas operações de criação (POST) e listagem (GET) de exames.
+ *  Não inclui o ID pois este é gerado automaticamente pelo sistema.</p>
+ *
+ *  @author Amanda
+ *  @version 1.0
+ *  @since 2026-01-15
+ */
 public class ExameDTO {
+    /**
+     * Nome do exame.
+     */
     @NotNull(message = "Nome é obrigatório")
     @NotBlank(message = "Nome não pode estar vazio")
     private String nome;
-
+    /**
+     * Descrição do exame.
+     */
     @NotNull(message = "Descrição é obrigatória")
     private String descricao;
-
+    /**
+     * Preço do exame.
+     */
     @NotNull(message = "Valor é obrigatório")
     private Double preco;
-
+    /**
+     * Identificador do paciente ao qual o exame pertence.
+     */
     @NotNull(message = "Paciente é obrigatório")  // ← NOVO!
     private Long pacienteId;
 
