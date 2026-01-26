@@ -5,6 +5,7 @@ import com.example.simlab.dto.ExameDetalheDTO;
 import com.example.simlab.dto.ExameUpdateDTO;
 import com.example.simlab.service.ExameService;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -53,7 +54,7 @@ public class ExameController {
      * @return ResponseEntity com status 200 OK e página de exames
      */
     @GetMapping
-    public ResponseEntity<Page<ExameDTO>> listar(@RequestParam(required = false) String nome, @RequestParam(required = false) String descricao, Pageable pageable) {
+    public ResponseEntity<Page<ExameDTO>> listar(@RequestParam(required = false) String nome, @RequestParam(required = false) String descricao, @ParameterObject Pageable pageable) {
         Page<ExameDTO> pagina = service.listar(nome, descricao, pageable);
 
         return ResponseEntity.ok(pagina);

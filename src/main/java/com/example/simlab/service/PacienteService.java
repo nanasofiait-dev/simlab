@@ -75,10 +75,10 @@ public class PacienteService {
         if (nome != null && cartaoCidadao != null) {
             pagina = repository.findByNomeAndCartaoCidadao(nome, cartaoCidadao, pageable);
         } else if (nome != null && !nome.isBlank()) {
-            pagina = repository.findByNome(nome, pageable);
+            pagina = repository.findByNomeIgnoreCase(nome, pageable);
 
         } else if (cartaoCidadao != null && !cartaoCidadao.isBlank()) {
-            pagina = repository.findByCartaoCidadao(cartaoCidadao, pageable);
+            pagina = repository.findByCartaoCidadaoIgnoreCase(cartaoCidadao, pageable);
 
         } else if (dataDeNascimento != null) {
             pagina = repository.findByDataDeNascimento(dataDeNascimento, pageable);

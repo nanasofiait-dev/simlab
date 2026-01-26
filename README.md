@@ -9,11 +9,12 @@ Sistema que permite o cadastro e gerenciamento de pacientes e seus respectivos e
 ##  Tecnologias Utilizadas
 
 - **Java 17** (LTS)
-- **Spring Boot 3.4.x**
+- **Spring Boot 3.4.1**
 - **Spring Data JPA** (Persistência)
 - **H2 Database** (Banco de dados em memória)
 - **Bean Validation** (Validação de dados)
 - **Maven** (Gerenciamento de dependências)
+- **Swagger 2.7.0**
 
 ## Estrutura do Projeto
 ```

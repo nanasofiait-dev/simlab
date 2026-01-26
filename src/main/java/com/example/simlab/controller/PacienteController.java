@@ -6,6 +6,7 @@ import com.example.simlab.dto.PacienteUpdateDTO;
 import com.example.simlab.service.ExameService;
 import com.example.simlab.service.PacienteService;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -60,7 +61,7 @@ public class PacienteController {
     public ResponseEntity<Page<PacienteDTO>> listar(@RequestParam(required = false) String nome,
                                                     @RequestParam(required = false) LocalDate dataDeNascimento,
                                                     @RequestParam(required = false) String cartaoCidadao,
-                                                    Pageable pageable) {
+                                                    @ParameterObject Pageable pageable) {
 
         Page<PacienteDTO> pagina = service.listar(nome, dataDeNascimento, cartaoCidadao, pageable);
 

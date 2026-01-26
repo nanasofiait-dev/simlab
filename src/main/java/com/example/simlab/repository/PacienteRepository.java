@@ -25,7 +25,7 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
      * @param pageable Configuração de paginação e ordenação
      * @return Página de pacientes com o nome especificado
      */
-    Page<Paciente> findByNome (String nome, Pageable pageable);
+    Page<Paciente> findByNomeIgnoreCase (String nome, Pageable pageable);
 
     /**
      * Busca pacientes por data de nascimento com paginação.
@@ -43,7 +43,7 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
      * @param pageable Configuração de paginação e ordenação.
      * @return Página de paciente encontrado com o Cartão de Cidadão especificado
      */
-    Page<Paciente> findByCartaoCidadao (String cartaoCidadao, Pageable pageable);
+    Page<Paciente> findByCartaoCidadaoIgnoreCase (String cartaoCidadao, Pageable pageable);
 
     /**
      * Busca pacientes por nome e Cartão de Cidadão com paginação.
