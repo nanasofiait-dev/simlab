@@ -3,6 +3,7 @@ package com.example.simlab.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -49,14 +50,15 @@ public class Paciente {
      * <p>Campo único no sistema - não pode haver dois pacientes com o mesmo Cartão de Cidadão.</p>
      */
     @NotBlank(message = "Número do CC é obrigatório")
-    @Size(min = 8, max = 20, message = "CC deve ter entre 8 e 20 caracteres")
-    @Column(name="cartao_cidadao",nullable = false, unique = true,length = 20)
+    @Pattern(regexp = "^[0-9]{8}$",message = "Cartão de Cidadão deve ter exatamente 8 dígitos")
+    @Column(name="cartao_cidadao",nullable = false, unique = true,length = 8)
     private String cartaoCidadao;
     /**
      * Telefone do paciente.
      */
     @NotBlank(message = "Telefone é obrigatório")
-    @Column(length = 15)
+    @Pattern(regexp = "^9[0-9]{8}$", message = "Telefone deve ter 9 dígitos começando com 9")
+    @Column(length = 9)
     private String telefone;
     /**
      * Endereço de email do paciente.

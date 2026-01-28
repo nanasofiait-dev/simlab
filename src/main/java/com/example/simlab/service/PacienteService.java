@@ -72,23 +72,26 @@ public class PacienteService {
     public Page<PacienteDTO> listar(String nome, LocalDate dataDeNascimento, String cartaoCidadao, Pageable pageable) {
 
         Page<Paciente> pagina;
+
         if (nome != null && cartaoCidadao != null) {
-            pagina = repository.findByNomeAndCartaoCidadao(nome, cartaoCidadao, pageable);
+            pagina = repository.findByNomeIgnoreCaseAndCartaoCidadaoIgnoreCase(nome, cartaoCidadao, pageable);
         } else if (nome != null && !nome.isBlank()) {
             pagina = repository.findByNomeIgnoreCase(nome, pageable);
-
         } else if (cartaoCidadao != null && !cartaoCidadao.isBlank()) {
             pagina = repository.findByCartaoCidadaoIgnoreCase(cartaoCidadao, pageable);
-
         } else if (dataDeNascimento != null) {
             pagina = repository.findByDataDeNascimento(dataDeNascimento, pageable);
-
         } else {
             pagina = repository.findAll(pageable);
         }
 
-
-        return pagina.map(paciente -> new PacienteDTO(paciente.getNome(), paciente.getDataDeNascimento(), paciente.getCartaoCidadao(), paciente.getTelefone(), paciente.getEmail()));
+        return pagina.map(paciente -> new PacienteDTO(
+                paciente.getNome(),
+                paciente.getDataDeNascimento(),
+                paciente.getCartaoCidadao(),
+                paciente.getTelefone(),
+                paciente.getEmail()
+        ));
     }
 
     /**

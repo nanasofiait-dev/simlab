@@ -1,12 +1,13 @@
 package com.example.simlab.dto;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
-
 /**
  * DTO para criação e listagem de paciente.
  *
@@ -17,6 +18,7 @@ import java.time.LocalDate;
  * @version 1.0
  * @since 2026-01-15
  */
+
 public class PacienteDTO {
     /**
      * Nome completo do paciente.
@@ -32,16 +34,20 @@ public class PacienteDTO {
     private LocalDate dataDeNascimento;
 
     /**
-     * Número do Cartão de Cidadão do paciente (único no sistema).
+     * Número do Cartão de Cidadão do paciente.
+     *
+     * <p>Campo único no sistema - não pode haver dois pacientes com o mesmo Cartão de Cidadão.</p>
      */
-    @NotBlank(message = "Cartão de cidadão é obrigatório")
-    @Size(min = 8, max = 20, message = "CC deve ter entre 8 e 20 caracteres")
+    @NotBlank(message = "Número do CC é obrigatório")
+    @Pattern(regexp = "^[0-9]{8}$",message = "Cartão de Cidadão deve ter exatamente 8 dígitos")
+    @Column(name="cartao_cidadao",nullable = false, unique = true,length = 8)
     private String cartaoCidadao;
-
     /**
-     * Número de telefone do paciente.
+     * Telefone do paciente.
      */
     @NotBlank(message = "Telefone é obrigatório")
+    @Pattern(regexp = "^9[0-9]{8}$", message = "Telefone deve ter 9 dígitos começando com 9")
+    @Column(length = 9)
     private String telefone;
 
     /**

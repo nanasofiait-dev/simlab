@@ -24,6 +24,8 @@ import java.time.LocalDate;
  * @version 1.0
  * @since 2026-01-15
  */
+
+//TODO: COLOCAR MAIS HTTPS COMO RESPOSTAS
 @RestController
 @RequestMapping("/pacientes")
 public class PacienteController {

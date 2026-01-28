@@ -1,7 +1,9 @@
 package com.example.simlab.dto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 
@@ -28,10 +30,15 @@ public class PacienteUpdateDTO {
     /**
      * Número do Cartão de Cidadão do paciente.
      */
+    @NotBlank(message = "Cartão de Cidadão é obrigatório")
+    @Pattern(regexp = "^[0-9]{8}$", message = "Cartão de Cidadão deve ter exatamente 8 dígitos")
     private String cartaoCidadao;
     /**
      * Número de telefone do paciente.
      */
+    @NotBlank(message = "Telefone é obrigatório")
+    @Pattern(regexp = "^9[0-9]{8}$", message = "Telefone deve ter 9 dígitos começando com 9")
+    @Column(length = 9)
     private String telefone;
     /**
      * Endereço de e-mail do paciente.

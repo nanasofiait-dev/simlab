@@ -65,7 +65,17 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
      */
     boolean existsByCartaoCidadaoIgnoreCase ( String cartaoCidadao);
 
-
+    /**
+     * Busca pacientes por nome E Cartão de Cidadão com paginação.
+     *
+     * <p>Busca case-insensitive em ambos os campos.</p>
+     *
+     * @param nome Nome do paciente
+     * @param cartaoCidadao Cartão de Cidadão do paciente
+     * @param pageable Configuração de paginação e ordenação
+     * @return Página de pacientes que correspondem a ambos os critérios
+     */
+    Page<Paciente> findByNomeIgnoreCaseAndCartaoCidadaoIgnoreCase(String nome, String cartaoCidadao, Pageable pageable);
 
 
 

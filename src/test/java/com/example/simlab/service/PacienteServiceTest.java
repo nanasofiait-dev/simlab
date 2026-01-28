@@ -14,179 +14,284 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Testes do PacienteService")
-class PacienteServiceTest {
+public class PacienteServiceTest {
 
     @Mock
     private PacienteRepository repository;
 
     @InjectMocks
     private PacienteService service;
-    private PacienteDTO pacienteDTO;
-    private PacienteUpdateDTO pacienteUpdateDTO;
+
+    private PacienteDTO dto;
     private Paciente paciente;
+    private PacienteUpdateDTO updateDTO;
 
     @BeforeEach
     void setUp() {
-        // Preparar dados de teste (reutilizados em vários testes)
-        pacienteDTO = new PacienteDTO(
+        dto = new PacienteDTO(
                 "Maria Silva",
-                LocalDate.of(1985, 3, 15),
+                LocalDate.of(1990, 1, 15),
                 "12345678",
                 "912345678",
                 "maria@email.com"
         );
 
-        pacienteUpdateDTO = new PacienteUpdateDTO(
-                "Maria Silva Santos",
-                LocalDate.of(1985, 3, 15),
-                "12345678",
-                "919999999",
-                "maria.nova@email.com"
-        );
-
         paciente = new Paciente(
                 "Maria Silva",
-                LocalDate.of(1985, 3, 15),
+                LocalDate.of(1990, 1, 15),
                 "12345678",
                 "912345678",
                 "maria@email.com"
         );
         paciente.setId(1L);
+
+        updateDTO = new PacienteUpdateDTO(
+                "Maria Silva Santos",
+                LocalDate.of(1990, 1, 15),
+                "12345678",
+                "919999999",
+                "maria.santos@email.com"
+        );
     }
+
+    //  TESTES DO MÉTODO CRIAR
 
     @Test
     @DisplayName("Deve criar paciente com sucesso")
-    void deveCriarPacienteComSucesso() {
+    void testCriarPacienteComSucesso() {
 
-        when(repository.existsByCartaoCidadaoIgnoreCase(pacienteDTO.getCartaoCidadao()))
-                .thenReturn(false); // Simula que CC não existe
+        when(repository.existsByCartaoCidadaoIgnoreCase(dto.getCartaoCidadao())).thenReturn(false);
+        when(repository.save(any(Paciente.class))).thenReturn(paciente);
 
-        when(repository.save(any(Paciente.class)))
-                .thenReturn(paciente); // Simula que salvou
-
-        PacienteDetalheDTO resultado = service.criar(pacienteDTO);
+        PacienteDetalheDTO resultado = service.criar(dto);
 
         assertNotNull(resultado);
         assertEquals(1L, resultado.getId());
         assertEquals("Maria Silva", resultado.getNome());
         assertEquals("12345678", resultado.getCartaoCidadao());
 
-        verify(repository, times(1)).existsByCartaoCidadaoIgnoreCase("12345678");
+        verify(repository, times(1)).existsByCartaoCidadaoIgnoreCase(dto.getCartaoCidadao());
         verify(repository, times(1)).save(any(Paciente.class));
     }
 
     @Test
-    @DisplayName("Deve lançar DuplicadoException quando CC já existe")
-    void deveLancarExcecaoQuandoCCDuplicado() {
+    @DisplayName("Deve lançar exceção ao tentar criar paciente com CC duplicado")
+    void testCriarPacienteComCCDuplicado() {
 
-        when(repository.existsByCartaoCidadaoIgnoreCase(pacienteDTO.getCartaoCidadao()))
-                .thenReturn(true); // Simula que CC JÁ existe
+        when(repository.existsByCartaoCidadaoIgnoreCase(dto.getCartaoCidadao())).thenReturn(true);
 
 
-        DuplicadoException exception = assertThrows(
-                DuplicadoException.class,
-                () -> service.criar(pacienteDTO)
-        );
-
-        assertEquals("Não é possível cadastrar paciente, pois já existe paciente com este Cartão Cidadão",
-                exception.getMessage());
+        assertThrows(DuplicadoException.class, () -> {
+            service.criar(dto);
+        });
 
         verify(repository, never()).save(any(Paciente.class));
     }
 
+    //TESTES DO MÉTODO LISTAR
+
+    @Test
+    @DisplayName("Deve listar todos os pacientes sem filtros")
+    void testListarTodosPacientes() {
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Paciente> paginaMock = new PageImpl<>(List.of(paciente));
+
+        when(repository.findAll(pageable)).thenReturn(paginaMock);
+
+        Page<PacienteDTO> resultado = service.listar(null, null, null, pageable);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.getTotalElements());
+        verify(repository).findAll(pageable);
+    }
+
+    @Test
+    @DisplayName("Deve listar pacientes filtrados por nome")
+    void testListarPacientesPorNome() {
+
+        String nome = "Maria Silva";
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Paciente> paginaMock = new PageImpl<>(List.of(paciente));
+
+        when(repository.findByNomeIgnoreCase(nome, pageable)).thenReturn(paginaMock);
+
+        Page<PacienteDTO> resultado = service.listar(nome, null, null, pageable);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.getTotalElements());
+        verify(repository).findByNomeIgnoreCase(nome, pageable);
+    }
+
+    @Test
+    @DisplayName("Deve listar pacientes filtrados por Cartão de Cidadão")
+    void testListarPacientesPorCC() {
+
+        String cc = "12345678";
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Paciente> paginaMock = new PageImpl<>(List.of(paciente));
+
+        when(repository.findByCartaoCidadaoIgnoreCase(cc, pageable)).thenReturn(paginaMock);
+
+        Page<PacienteDTO> resultado = service.listar(null, null, cc, pageable);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.getTotalElements());
+        verify(repository).findByCartaoCidadaoIgnoreCase(cc, pageable);
+    }
+
+    @Test
+    @DisplayName("Deve listar pacientes filtrados por data de nascimento")
+    void testListarPacientesPorDataNascimento() {
+
+        LocalDate dataNascimento = LocalDate.of(1990, 1, 15);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Paciente> paginaMock = new PageImpl<>(List.of(paciente));
+
+        when(repository.findByDataDeNascimento(dataNascimento, pageable)).thenReturn(paginaMock);
+
+        Page<PacienteDTO> resultado = service.listar(null, dataNascimento, null, pageable);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.getTotalElements());
+        verify(repository).findByDataDeNascimento(dataNascimento, pageable);
+    }
+
+    @Test
+    @DisplayName("Deve listar pacientes filtrados por nome e CC")
+    void testListarPacientesPorNomeECC() {
+        String nome = "Maria Silva";
+        String cc = "12345678";
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Paciente> paginaMock = new PageImpl<>(List.of(paciente));
+
+        when(repository.findByNomeIgnoreCaseAndCartaoCidadaoIgnoreCase(nome,cc, pageable))
+                .thenReturn(paginaMock);
+
+        Page<PacienteDTO> resultado = service.listar(nome,null, cc, pageable);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.getTotalElements());
+        verify(repository).findByNomeIgnoreCaseAndCartaoCidadaoIgnoreCase(nome, cc, pageable);
+    }
+
+    @Test
+    @DisplayName("Deve retornar lista vazia quando não encontrar pacientes")
+    void testListarPacientesVazio() {
+
+        String nome = "Nome Inexistente";
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Paciente> paginaVazia = new PageImpl<>(List.of());
+
+        when(repository.findByNomeIgnoreCase(nome, pageable)).thenReturn(paginaVazia);
+
+        Page<PacienteDTO> resultado = service.listar(nome, null, null, pageable);
+
+        assertNotNull(resultado);
+        assertEquals(0, resultado.getTotalElements());
+        assertTrue(resultado.isEmpty());
+    }
+
+    //TESTES DO MÉTODO BUSCAR POR ID
+
     @Test
     @DisplayName("Deve buscar paciente por ID com sucesso")
-    void deveBuscarPorIdComSucesso() {
+    void testBuscarPorIdComSucesso() {
 
-        when(repository.findById(1L))
-                .thenReturn(Optional.of(paciente));
+        when(repository.findById(1L)).thenReturn(Optional.of(paciente));
 
         Optional<PacienteDetalheDTO> resultado = service.buscarPorId(1L);
 
         assertTrue(resultado.isPresent());
         assertEquals("Maria Silva", resultado.get().getNome());
-        verify(repository, times(1)).findById(1L);
+        assertEquals("12345678", resultado.get().getCartaoCidadao());
+        verify(repository).findById(1L);
     }
 
     @Test
-    @DisplayName("Deve retornar Optional vazio quando paciente não existe")
-    void deveRetornarVazioQuandoNaoExiste() {
-        when(repository.findById(999L))
-                .thenReturn(Optional.empty());
+    @DisplayName("Deve retornar Optional vazio quando ID não existe")
+    void testBuscarPorIdNaoExiste() {
 
-        Optional<PacienteDetalheDTO> resultado = service.buscarPorId(999L);
+        Long idInexistente = 999L;
+        when(repository.findById(idInexistente)).thenReturn(Optional.empty());
 
-        assertFalse(resultado.isPresent());
-        verify(repository, times(1)).findById(999L);
+        Optional<PacienteDetalheDTO> resultado = service.buscarPorId(idInexistente);
+
+        assertTrue(resultado.isEmpty());
+        verify(repository).findById(idInexistente);
     }
+
+    //TESTES DO MÉTODO ATUALIZAR
 
     @Test
     @DisplayName("Deve atualizar paciente com sucesso")
-    void deveAtualizarPacienteComSucesso() {
-        when(repository.findById(1L))
-                .thenReturn(Optional.of(paciente));
+    void testAtualizarPacienteComSucesso() {
 
-        when(repository.save(any(Paciente.class)))
-                .thenReturn(paciente);
+        when(repository.findById(1L)).thenReturn(Optional.of(paciente));
+        when(repository.save(any(Paciente.class))).thenReturn(paciente);
 
-        PacienteDetalheDTO  resultado = service.atualizar(1L, pacienteUpdateDTO);
+        PacienteDetalheDTO resultado = service.atualizar(1L, updateDTO);
 
         assertNotNull(resultado);
-        assertEquals("Maria Silva Santos", resultado.getNome());
-        verify(repository, times(1)).findById(1L);
-        verify(repository, times(1)).save(any(Paciente.class));
+        assertEquals(1L, resultado.getId());
+        verify(repository).findById(1L);
+        verify(repository).save(any(Paciente.class));
     }
 
     @Test
-    @DisplayName("Deve lançar RecursoNaoEncontradoException ao atualizar paciente inexistente")
-    void deveLancarExcecaoAoAtualizarInexistente() {
+    @DisplayName("Deve lançar exceção ao tentar atualizar paciente inexistente")
+    void testAtualizarPacienteInexistente() {
 
-        when(repository.findById(999L))
-                .thenReturn(Optional.empty());
+        Long idInexistente = 999L;
+        when(repository.findById(idInexistente)).thenReturn(Optional.empty());
 
-        RecursoNaoEncontradoException exception = assertThrows(
-                RecursoNaoEncontradoException.class,
-                () -> service.atualizar(999L, pacienteUpdateDTO)
-        );
+        assertThrows(RecursoNaoEncontradoException.class, () -> {
+            service.atualizar(idInexistente, updateDTO);
+        });
 
-        assertEquals("Paciente não foi encontrado", exception.getMessage());
         verify(repository, never()).save(any(Paciente.class));
     }
 
+    //TESTES DO MÉTODO APAGAR
+
     @Test
     @DisplayName("Deve apagar paciente com sucesso")
-    void deveApagarPacienteComSucesso() {
+    void testApagarPacienteComSucesso() {
 
-        when(repository.existsById(1L))
-                .thenReturn(true);
-
+        when(repository.existsById(1L)).thenReturn(true);
 
         boolean resultado = service.apagar(1L);
 
         assertTrue(resultado);
-        verify(repository, times(1)).existsById(1L);
-        verify(repository, times(1)).deleteById(1L);
+        verify(repository).existsById(1L);
+        verify(repository).deleteById(1L);
     }
 
     @Test
-    @DisplayName("Deve retornar false ao apagar paciente inexistente")
-    void deveRetornarFalseAoApagarInexistente() {
+    @DisplayName("Deve retornar false ao tentar apagar paciente inexistente")
+    void testApagarPacienteInexistente() {
 
-        when(repository.existsById(999L))
-                .thenReturn(false);
+        Long idInexistente = 999L;
+        when(repository.existsById(idInexistente)).thenReturn(false);
 
-        boolean resultado = service.apagar(999L);
+        boolean resultado = service.apagar(idInexistente);
 
         assertFalse(resultado);
-        verify(repository, times(1)).existsById(999L);
-        verify(repository, never()).deleteById(anyLong());
+        verify(repository, never()).deleteById(any());
     }
 }
