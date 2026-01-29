@@ -44,9 +44,17 @@ src/main/java/com/example/simlab/
 - ✅ Remover exame
 
 ### Validações
-- ✅ Cartão de Cidadão único por paciente
-- ✅ Nome de exame único
-- ✅ Exame deve estar vinculado a um paciente existente
+
+**Cartão de Cidadão**:
+- ✅ Exatamente 8 dígitos numéricos (regex: `^[0-9]{8}$`)
+- ✅ Único por paciente
+
+**Telefone**:
+- ✅ 9 dígitos começando com 9 (regex: `^9[0-9]{8}$`)
+
+**Exame**:
+- ✅ Nome único no sistema
+- ✅ Vinculado a paciente existente
 - ✅ Campos obrigatórios validados
 
 ##  Relacionamentos
@@ -222,11 +230,24 @@ O projeto utiliza **H2 Database** (em memória):
 - Username: `sa`
 - Password: *(vazio)*
 
+##  Documentação Swagger
+
+Documentação interativa da API disponível em:
+- **Swagger UI**: `http://localhost:8080/swagger-ui/index.html`
+- **OpenAPI JSON**: `http://localhost:8080/api-docs`
+
+Permite testar todos os endpoints diretamente no navegador!
 ##  Testes
 
-28 testes manuais realizados via Postman:
-- ✅ 16 testes de Pacientes (CRUD + validações)
-- ✅ 12 testes de Exames (CRUD + validações)
+### Testes Unitários
+- ✅ 28 testes unitários com JUnit e Mockito
+- ✅ 14 testes em PacienteService
+- ✅ 14 testes em ExameService
+- ✅ Cobertura de cenários: sucesso, erros, validações
+
+### Testes Manuais
+- ✅ Collection Postman com 12 requisições
+- ✅ Documentação Swagger interativa
 - ✅ 100% de cobertura dos endpoints
 
 ##  Aprendizados

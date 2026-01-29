@@ -27,16 +27,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 
-    // Trata DuplicadoException → 400 Bad Request
+    // Trata DuplicadoException → 409 Conflict
     @ExceptionHandler(DuplicadoException.class)
     public ResponseEntity<Map<String, Object>> tratarDuplicado(DuplicadoException ex) {
         Map<String, Object> erro = new HashMap<>();
         erro.put("timestamp", LocalDateTime.now());
-        erro.put("status", HttpStatus.BAD_REQUEST.value());
-        erro.put("error", "Bad Request");
+        erro.put("status", HttpStatus.CONFLICT.value());
+        erro.put("error", "Conflict");
         erro.put("message", ex.getMessage());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
     }
 
     // Trata validações (@Valid) → 400 Bad Request
